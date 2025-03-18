@@ -1,0 +1,21 @@
+# RustRover (JetBrains IDE) specific
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Cargo build outputs
+target/
+
+# Rust-specific files
+*.rs.bk
+
+# Common system files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+temp/

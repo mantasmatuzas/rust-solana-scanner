@@ -1,0 +1,15 @@
+[package]
+name = "rust-scanner"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+hyper = { version = "1", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
+http-body-util = "0.1"
+hyper-util = { version = "0.1", features = ["full"] }
+
+solana-client = "2.2.1"
+solana-sdk = "2.2.1"
+solana-transaction-status-client-types = "2.2.1"
+url = "2.5.4"
