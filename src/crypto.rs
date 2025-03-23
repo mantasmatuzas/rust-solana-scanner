@@ -1,41 +1,36 @@
+#![allow(dead_code)]
+
+use crate::{Error, Result};
+use std::sync::Arc;
+
 use solana_client::rpc_config::RpcBlockConfig;
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_transaction_status_client_types::{TransactionDetails, UiTransactionEncoding};
-use std::error::Error as StdError;
-use std::fmt;
 
-#[derive(Debug)]
-pub struct Error {
-    message: String,
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.message)
-    }
-}
-
-impl StdError for Error {}
-
+use serde::{Deserialize, Serialize};
+#[derive(Clone, Debug, Serialize)]
 pub struct SolanaBlock {
     pub slot: u64,
     pub transaction_count: usize,
 }
-pub struct SolanaDriver {
-    rpc_client: solana_client::rpc_client::RpcClient,
+
+#[derive(Clone)]
+pub struct Solana {
+    rpc_client: Arc<solana_client::rpc_client::RpcClient>,
 }
 
-impl SolanaDriver {
-    pub fn new(api_url: &str) -> Self {
+impl Solana {
+    pub fn connect_to_api_url(api_url: &str) -> Self {
+        println!("Connecting to {}", api_url);
         Self {
-            rpc_client: solana_client::rpc_client::RpcClient::new_with_commitment(
+            rpc_client: Arc::new(solana_client::rpc_client::RpcClient::new_with_commitment(
                 api_url,
                 CommitmentConfig::confirmed(),
-            ),
+            )),
         }
     }
 
-    pub fn get_block(&self, slot: u64) -> Result<SolanaBlock, Error> {
+    pub async fn get_block(&self, slot: u64) -> Result<SolanaBlock> {
         self.rpc_client
             .get_block_with_config(
                 slot,
@@ -57,8 +52,6 @@ impl SolanaDriver {
                     transaction_count: 0,
                 },
             })
-            .map_err(|error| Error {
-                message: format!("{:?}", error),
-            })
+            .map_err(|_| Error::SolanaBlockNotFound { slot })
     }
 }
