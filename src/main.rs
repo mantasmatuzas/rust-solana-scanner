@@ -31,7 +31,6 @@ async fn main() -> Result<()> {
         .route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
 
     let routes_all = Router::new()
-        .merge(routes_hello())
         .merge(web::routes_login::routes())
         .nest("/api", routes_apis)
         .layer(middleware::map_response(main_response_mapper))
@@ -62,47 +61,3 @@ async fn main_response_mapper<T>(res: Response<T>) -> Response<T> {
     println!();
     res
 }
-
-// region:      --- Routes Hello
-fn routes_hello() -> Router {
-    Router::new()
-        .route("/hello", get(handler_hello))
-        .route("/hello2/{name}", get(handler_hello2))
-}
-
-#[derive(Debug, Deserialize)]
-struct HelloParams {
-    name: Option<String>,
-}
-
-// e.g., `hello?name=Mantas`
-async fn handler_hello(Query(params): Query<HelloParams>) -> impl axum::response::IntoResponse {
-    println!("->> {:<12} - handler_hello - {params:?}", "HANDLER");
-
-    let name = params.name.as_deref().unwrap_or("World!");
-    Html(format!("<h1>Hello {name}</h1>"))
-}
-
-// e.g., `/hello2/Mantas`
-async fn handler_hello2(Path(name): Path<String>) -> impl IntoResponse {
-    println!("->> {:<12} - handler_hello2 - {name:?}", "HANDLER");
-
-    Html(format!("<h1>Hello {name}</h1>"))
-}
-
-// endregion:   --- Handler Hello
-
-// #[allow(dead_code)]
-// fn get_block() -> Result<crypto::SolanaBlock, crypto::Error> {
-//     const SOLANA_API_ENDPOINT: &str = "https://api.devnet.solana.com";
-//     println!("Connecting to Solana {}", SOLANA_API_ENDPOINT);
-//
-//     crypto::Solana::connect_to_api_url(SOLANA_API_ENDPOINT)
-//         .get_block(354587721)
-//         .inspect(|block| {
-//             println!(
-//                 "Transaction count in slot {} is {}",
-//                 block.slot, block.transaction_count
-//             );
-//         })
-// }
