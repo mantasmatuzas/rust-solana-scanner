@@ -15,7 +15,7 @@ async fn get_solana_block_by_slot(
     ctx: Ctx,
     Path(slot): Path<u64>,
 ) -> crate::Result<Json<SolanaBlock>> {
-    println!("->> {:<12} - get_solana_block_by_slot", "HANDLER");
+    println!("->> {:<12} - get_solana_block_by_slot - {slot:?}", "HANDLER");
 
     let mut block = solana.get_block(slot).await?;
 
