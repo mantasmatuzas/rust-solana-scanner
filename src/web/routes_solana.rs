@@ -6,7 +6,7 @@ use axum::{Json, Router};
 
 pub fn routes(solana: Solana) -> Router {
     Router::new()
-        .route("/solana/{slot}", get(get_solana_block_by_slot))
+        .route("/solana/block/{slot}", get(get_solana_block_by_slot))
         .with_state(solana)
 }
 

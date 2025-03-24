@@ -26,7 +26,7 @@ async fn quick_dev() -> Result<()> {
 
     hc.do_get("/api/tickets").await?.print().await?;
 
-    hc.do_get("/api/solana/354587721").await?.print().await?;
+    hc.do_get("/api/solana/block/354587721").await?.print().await?;
 
     Ok(())
 }
